@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DataTablePaginationEFCore.Context;
+using DataTablePaginationEFCore.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -28,13 +29,18 @@ namespace DataTablePaginationEFCore
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddEntityFrameworkSqlServer()
-                .AddDbContext<DataTablePaginationEFCoreContext>(options =>
+                .AddDbContext<DataTablePaginationEFCoreContext>((sp, options) =>
                 {
                     options.UseSqlServer(
                         Configuration.GetConnectionString(ConnectionStringName),
                         opts => opts.MigrationsAssembly(typeof(DataTablePaginationEFCoreContext).Assembly.GetName().Name)
                     );
+
+                    options.UseInternalServiceProvider(sp);
                 }, ServiceLifetime.Transient);
+
+            services.AddTransient<IProductRepository, ProductRepository>();
+
             services.AddControllersWithViews();
         }
 
