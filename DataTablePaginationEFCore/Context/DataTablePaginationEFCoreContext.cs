@@ -10,6 +10,8 @@ namespace DataTablePaginationEFCore.Context
 {
     public class DataTablePaginationEFCoreContext : DbContext
     {
+        public DbSet<Product> Product { get; set; }
+
         public DataTablePaginationEFCoreContext([NotNullAttribute] DbContextOptions options) : base(options)
         {
         }
@@ -32,5 +34,6 @@ namespace DataTablePaginationEFCore.Context
             base.OnModelCreating(modelBuilder);
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(DataTablePaginationEFCoreContext).Assembly);
         }
+
     }
 }

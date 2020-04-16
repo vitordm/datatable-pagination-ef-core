@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DataTablePaginationEFCore.Context;
-using DataTablePaginationEFCore.Repositories;
+//using DataTablePaginationEFCore.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -39,7 +39,7 @@ namespace DataTablePaginationEFCore
                     options.UseInternalServiceProvider(sp);
                 }, ServiceLifetime.Transient);
 
-            services.AddTransient<IProductRepository, ProductRepository>();
+            //services.AddTransient<IProductRepository, ProductRepository>();
 
             services.AddControllersWithViews();
         }
