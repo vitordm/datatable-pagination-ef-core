@@ -1,7 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Dynamic.Core;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace DataTablePaginationEFCore.Helpers.DataTable
@@ -11,7 +12,7 @@ namespace DataTablePaginationEFCore.Helpers.DataTable
         public static DataTableServerSideResult<T> GetDatatableResult<T>(this IQueryable<T> query,
             DataTableServerSideRequest request) where T : class
         {
-
+            query = FilterQueryDataTable(query, request);
             var countTotal = query.Count();
 
             query = OrderDataTable(query, request);
@@ -30,8 +31,8 @@ namespace DataTablePaginationEFCore.Helpers.DataTable
         public static async Task<DataTableServerSideResult<T>> GetDatatableResultAsync<T>(this IQueryable<T> query,
             DataTableServerSideRequest request) where T : class
         {
+            query = FilterQueryDataTable(query, request);
             var countTotal = query.Count();
-
             query = OrderDataTable(query, request);
 
             var dataTableServerSideResult = new DataTableServerSideResult<T>
@@ -70,6 +71,25 @@ namespace DataTablePaginationEFCore.Helpers.DataTable
                 {
                     return query.OrderBy(ordering);
                 }
+            }
+
+            return query;
+        }
+
+        private static IQueryable<T> FilterQueryDataTable<T>(IQueryable<T> query,
+            DataTableServerSideRequest request)
+        {
+            if (request.Search.Regex || string.IsNullOrWhiteSpace(request.Search.Value))
+            {
+                return query;
+            }
+
+            var columnsSearchable = request.Columns.Where(c => c.Searchable && !string.IsNullOrEmpty(c.Name)).ToList();
+            string search = string.Empty;
+            string aux = string.Empty;
+            foreach (var column in columnsSearchable)
+            {
+                query = query.Where(ExpressionUtils.BuildPredicate<T>(column.Name, "Contains", request.Search.Value));
             }
 
             return query;

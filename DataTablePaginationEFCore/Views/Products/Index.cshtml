@@ -22,9 +22,10 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model)
+        @*@foreach (var item in Model)
         {
             <tr>
+                
                 <td>
                     @Html.DisplayFor(modelItem => item.Description)
                 </td>
@@ -37,19 +38,51 @@
                     <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
                 </td>
             </tr>
-        }
+        }*@
     </tbody>
 </table>
 
 @section Scripts
 {
     <script>
+        const urlList = `@Url.Action("List", "Products")`;
+        const urlEdit = `@Url.Action("Edit", "Products")`;
+        const urlDetails = `@Url.Action("Details", "Products")`;
+        const urlDelete = `@Url.Action("Delete", "Products")`;
+
         //$('#table-product').dataTable();
         $('#table-product').DataTable({
             serverSide: true,
+            columns: [
+                { data: 'description', visible: true, searchable: true, orderable: true, name: 'Description' },
+                { data: 'price', visible: true, searchable: false, orderable: true, name: 'Price' },
+                { data: '__actions', visible: true, searchable: false, orderable: false },
+            ],
+            columnDefs: [
+                { className: 'td-text', orderable: true, targets: [0] },
+                { className: 'td-number', orderable: true, targets: [1] },
+                { className: 'td-icon', orderable: false, targets: [2] }
+            ],
             ajax: {
-                url: @Url.Action("List", "Products"),
-                type: 'POST'
+                url: urlList,
+                type: 'POST',
+                dataSrc: (json) => {
+                    let result = [];
+                    for (let data of json.data) {
+
+                        const actionsHtml = `
+                            <a href="${urlEdit}/${data.id}">Edit</a> 
+                            <a href="${urlDetails}/${data.id}">Details</a>
+                            <a href="${urlDelete}/${data.id}">Delete</a>
+                        `;
+
+                        result.push(
+                            { ...data, __actions: actionsHtml }
+                        );
+                    }
+
+                    return result;
+                }
             }
         });
     </script>

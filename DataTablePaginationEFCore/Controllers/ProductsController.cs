@@ -26,11 +26,19 @@ namespace DataTablePaginationEFCore.Controllers
             return View(await _context.Product.ToListAsync());
         }
 
-        public async Task<IActionResult> List([FromBody] DataTableServerSideRequest request)
+        public async Task<IActionResult> List([FromForm] DataTableServerSideRequest request)
         {
+            try
+            {
+                var result = await _context.Product.GetDatatableResultAsync(request);
+                return Json(result);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
 
-            var result = await _context.Product.GetDatatableResultAsync(request);
-            return Json(result);
+            
         }
 
         // GET: Products/Details/5
