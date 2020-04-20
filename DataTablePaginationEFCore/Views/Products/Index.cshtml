@@ -1,6 +1,4 @@
-﻿@model IEnumerable<DataTablePaginationEFCore.Models.Entities.Product>
-
-@{
+﻿@{
     ViewData["Title"] = "Index";
 }
 
@@ -13,16 +11,17 @@
     <thead class="thead-dark">
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Description)
+                Description
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Price)
+                Price
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-        @*@foreach (var item in Model)
+        @* Old example
+        @foreach (var item in Model)
         {
             <tr>
                 
@@ -54,14 +53,31 @@
         $('#table-product').DataTable({
             serverSide: true,
             columns: [
-                { data: 'description', visible: true, searchable: true, orderable: true, name: 'Description' },
-                { data: 'price', visible: true, searchable: false, orderable: true, name: 'Price' },
-                { data: '__actions', visible: true, searchable: false, orderable: false },
+                {
+                    data: 'description',
+                    visible: true,
+                    searchable: true,
+                    orderable: true,
+                    name: 'Description'
+                },
+                {
+                    data: 'price',
+                    visible: true,
+                    searchable: false,
+                    orderable: true,
+                    name: 'Price'
+                },
+                {
+                    data: '__actions',
+                    visible: true,
+                    searchable: false,
+                    orderable: false
+                },
             ],
             columnDefs: [
                 { className: 'td-text', orderable: true, targets: [0] },
-                { className: 'td-number', orderable: true, targets: [1] },
-                { className: 'td-icon', orderable: false, targets: [2] }
+                { className: 'td-numbers', orderable: true, targets: [1] },
+                { className: 'td-icons', orderable: false, targets: [2] }
             ],
             ajax: {
                 url: urlList,

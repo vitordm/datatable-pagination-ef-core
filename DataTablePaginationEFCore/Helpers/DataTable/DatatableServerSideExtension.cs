@@ -12,16 +12,17 @@ namespace DataTablePaginationEFCore.Helpers.DataTable
         public static DataTableServerSideResult<T> GetDatatableResult<T>(this IQueryable<T> query,
             DataTableServerSideRequest request) where T : class
         {
+            var recordsTotal = query.Count();
             query = FilterQueryDataTable(query, request);
-            var countTotal = query.Count();
+            var recordsFiltered =  query.Count();
 
             query = OrderDataTable(query, request);
 
             var dataTableServerSideResult = new DataTableServerSideResult<T>
             {
                 Draw = request.Draw,
-                RecordsFiltered = countTotal,
-                RecordsTotal = countTotal,
+                RecordsFiltered = recordsFiltered,
+                RecordsTotal = recordsTotal,
                 Data = query.Skip(request.Start).Take(request.Length).ToList()
             };
 
@@ -31,15 +32,16 @@ namespace DataTablePaginationEFCore.Helpers.DataTable
         public static async Task<DataTableServerSideResult<T>> GetDatatableResultAsync<T>(this IQueryable<T> query,
             DataTableServerSideRequest request) where T : class
         {
+            var recordsTotal = await query.CountAsync();
             query = FilterQueryDataTable(query, request);
-            var countTotal = query.Count();
+            var recordsFiltered = await query.CountAsync();
             query = OrderDataTable(query, request);
 
             var dataTableServerSideResult = new DataTableServerSideResult<T>
             {
                 Draw = request.Draw,
-                RecordsFiltered = countTotal,
-                RecordsTotal = countTotal,
+                RecordsFiltered = recordsFiltered,
+                RecordsTotal = recordsTotal,
                 Data = await query.Skip(request.Start).Take(request.Length).ToListAsync()
             };
 
